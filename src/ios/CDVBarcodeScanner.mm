@@ -18,6 +18,8 @@
 
 #import <Cordova/CDVPlugin.h>
 
+#define OVERLAY_VIEW_TITLE @"二维码"
+#define OVERLAY_VIEW_HINT @"将二维码放入框内，即可自动扫描"
 
 //------------------------------------------------------------------------------
 // Delegate to handle orientation functions
@@ -99,9 +101,121 @@
 - (id)initWithProcessor:(CDVbcsProcessor*)processor alternateOverlay:(NSString *)alternateXib;
 - (void)startCapturing;
 - (UIView*)buildOverlayView;
-- (UIImage*)buildReticleImage;
 - (void)shutterButtonPressed;
 - (IBAction)cancelButtonPressed:(id)sender;
+
+@end
+
+//------------------------------------------------------------------------------
+// Overlay view
+//------------------------------------------------------------------------------
+@interface QrcodeOverlayView : UIView {
+    CGRect maskRect;
+}
+
+- (void)createSubviews:(CGRect)frame target:(id)target;
+- (void)drawCorner:(CGContextRef)context center:(CGPoint)center xOffset:(CGFloat)xOffset yOffset:(CGFloat)yOffset;
+@end
+
+@implementation QrcodeOverlayView
+
+#define RETICLE_SIZE    500.0f
+#define RETICLE_TOP_OFFSET    10.0f
+#define RETICLE_OFFSET   60.0f
+#define RETICLE_ALPHA     0.3f
+
+
+- (id)initWithFrame:(CGRect)frame target:(id)target {
+    self = [super initWithFrame:frame];
+    if (self) {
+        CGFloat rootViewHeight = CGRectGetHeight(frame);
+        CGFloat rootViewWidth  = CGRectGetWidth(frame);
+        CGFloat minAxis = MIN(rootViewHeight, rootViewWidth);
+        
+        maskRect = CGRectMake(0.5 * (rootViewWidth - minAxis) + RETICLE_OFFSET,
+                              0.5 * (rootViewHeight - minAxis) + RETICLE_OFFSET - RETICLE_TOP_OFFSET,
+                              minAxis - RETICLE_OFFSET * 2,
+                              minAxis - RETICLE_OFFSET * 2);
+        
+        [self createSubviews:frame target:target];
+    }
+    
+    return self;
+}
+
+- (void)createSubviews:(CGRect)frame target:(id)target {
+    // label
+    CGRect labelFrame = CGRectMake(0, maskRect.origin.y + maskRect.size.height + 13, frame.size.width, 20);
+    UILabel* label = [[[UILabel alloc] initWithFrame:labelFrame] autorelease];
+    label.text = OVERLAY_VIEW_HINT;
+    label.font = [UIFont systemFontOfSize:13];
+    label.backgroundColor = [UIColor clearColor];
+    label.textColor = [UIColor whiteColor];
+    label.textAlignment = NSTextAlignmentCenter;
+    [self addSubview:label];
+    
+    // cancel button
+    CGFloat btnWith = 160;
+    CGFloat btnHeight = 60;
+    CGRect btnFrame = CGRectMake((frame.size.width - btnWith) / 2, frame.size.height - btnHeight - 30, btnWith, btnHeight);
+    UIButton* button = [UIButton buttonWithType:UIButtonTypeCustom];
+    button.frame = btnFrame;
+    button.bounds = CGRectMake((btnWith - 20) / 2, (btnHeight - 20) / 2, 20, 20);
+    //button.imageView.contentMode = UIViewContentModeScaleAspectFill;
+    UIImage* lpImgChooseImage = [[[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"cancel_normal.png" ofType:@""]] autorelease];
+    UIImage* lpImgChooseImageHover = [[[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"cancel_pressed.png" ofType:@""]] autorelease];
+    [button setImage:lpImgChooseImage forState:UIControlStateNormal];
+    [button setImage:lpImgChooseImageHover forState:UIControlStateHighlighted];
+    [button addTarget:target action:@selector(cancelButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [self addSubview:button];
+}
+
+- (void)drawCorner:(CGContextRef)context center:(CGPoint)center xOffset:(CGFloat)xOffset yOffset:(CGFloat)yOffset {
+    // draw first line
+    CGPoint firstPoint = CGPointMake(center.x, center.y);
+    CGContextMoveToPoint(context, firstPoint.x, firstPoint.y);
+    CGPoint secondPoint = CGPointMake(center.x, center.y + yOffset);
+    CGContextAddLineToPoint(context, secondPoint.x, secondPoint.y);
+    CGContextStrokePath(context);
+    
+    // draw second line
+    CGContextMoveToPoint(context, firstPoint.x, firstPoint.y);
+    secondPoint = CGPointMake(center.x + xOffset, center.y);
+    CGContextAddLineToPoint(context, secondPoint.x, secondPoint.y);
+    CGContextStrokePath(context);
+}
+
+- (void)drawRect:(CGRect)rect {
+    // Drawing code
+    CGRect rBounds = self.bounds;
+    
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    
+    // Fill background with 80% white
+    CGContextSetFillColorWithColor(context, [[UIColor colorWithWhite:0.f alpha:RETICLE_ALPHA] CGColor]);
+    CGContextFillRect(context, rBounds);
+    
+    UIColor* lColor = [UIColor colorWithRed:0x38/255.0f green:0x93/255.0f blue:0xed/255.0f alpha:1.0f];
+    // Draw the window 'frame'
+    CGContextSetStrokeColorWithColor(context,  [lColor CGColor]);
+    CGContextSetLineWidth(context, 1);
+    
+    CGContextStrokeRect(context, maskRect);
+    
+    // make the window transparent
+    CGContextSetBlendMode(context, kCGBlendModeClear);
+    CGContextFillRect(context, maskRect);
+    
+    // draw the corners
+    CGContextSetBlendMode(context, kCGBlendModeColor);
+    CGContextSetLineWidth(context, 2);
+    CGFloat cornerWidth = 16;
+    [self drawCorner:context center:CGPointMake(maskRect.origin.x, maskRect.origin.y) xOffset:cornerWidth yOffset:cornerWidth];
+    [self drawCorner:context center:CGPointMake(maskRect.origin.x + maskRect.size.width, maskRect.origin.y) xOffset:-cornerWidth yOffset:cornerWidth];
+    [self drawCorner:context center:CGPointMake(maskRect.origin.x, maskRect.origin.y + maskRect.size.height) xOffset:cornerWidth yOffset:-cornerWidth];
+    [self drawCorner:context center:CGPointMake(maskRect.origin.x + maskRect.size.width, maskRect.origin.y + maskRect.size.height) xOffset:-cornerWidth yOffset:-cornerWidth];
+}
+
 
 @end
 
@@ -267,17 +381,16 @@ parentViewController:(UIViewController*)parentViewController
 
 //--------------------------------------------------------------------------
 - (void)openDialog {
-    [self.parentViewController
-     presentModalViewController:self.viewController
-     animated:YES
-     ];
+    UINavigationController* navController = [[[UINavigationController alloc] initWithRootViewController:self.viewController] autorelease];
+    self.viewController.title = OVERLAY_VIEW_TITLE;
+    [self.parentViewController presentViewController:navController animated:YES completion:nil];
 }
 
 //--------------------------------------------------------------------------
 - (void)barcodeScanDone {
     self.capturing = NO;
     [self.captureSession stopRunning];
-    [self.parentViewController dismissModalViewControllerAnimated: YES];
+    [self.parentViewController dismissViewControllerAnimated:YES completion:nil];
     
     // viewcontroller holding onto a reference to us, release them so they
     // will release us
@@ -289,8 +402,12 @@ parentViewController:(UIViewController*)parentViewController
 
 //--------------------------------------------------------------------------
 - (void)barcodeScanSucceeded:(NSString*)text format:(NSString*)format {
-    [self barcodeScanDone];
-    [self.plugin returnSuccess:text format:format cancelled:FALSE flipped:FALSE callback:self.callback];
+    //[self barcodeScanDone];
+    //[self.plugin returnSuccess:text format:format cancelled:FALSE flipped:FALSE callback:self.callback];
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [self barcodeScanDone];
+        [self.plugin returnSuccess:text format:format cancelled:FALSE flipped:FALSE callback:self.callback];
+        });
 }
 
 //--------------------------------------------------------------------------
@@ -354,7 +471,8 @@ parentViewController:(UIViewController*)parentViewController
     output.alwaysDiscardsLateVideoFrames = YES;
     output.videoSettings = videoOutputSettings;
     
-    [output setSampleBufferDelegate:self queue:dispatch_get_main_queue()];
+    //[output setSampleBufferDelegate:self queue:dispatch_get_main_queue()];
+    [output setSampleBufferDelegate:self queue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_LOW, 0)];
     
     if (![captureSession canSetSessionPreset:AVCaptureSessionPresetMedium]) {
         return @"unable to preset medium quality video capture";
@@ -734,134 +852,19 @@ parentViewController:(UIViewController*)parentViewController
 
 //--------------------------------------------------------------------------
 - (UIView*)buildOverlayView {
-    
-    if ( nil != self.alternateXib )
-    {
+    if (nil != self.alternateXib) {
         return [self buildOverlayViewFromXib];
     }
+    
     CGRect bounds = self.view.bounds;
     bounds = CGRectMake(0, 0, bounds.size.width, bounds.size.height);
+
+    UIView* overlayView = [[[QrcodeOverlayView alloc] initWithFrame:bounds target:self] autorelease];
     
-    UIView* overlayView = [[[UIView alloc] initWithFrame:bounds] autorelease];
     overlayView.autoresizesSubviews = YES;
-    overlayView.autoresizingMask    = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-    overlayView.opaque              = NO;
-    
-    UIToolbar* toolbar = [[[UIToolbar alloc] init] autorelease];
-    toolbar.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleTopMargin;
-    
-    id cancelButton = [[[UIBarButtonItem alloc] autorelease]
-                       initWithBarButtonSystemItem:UIBarButtonSystemItemCancel
-                       target:(id)self
-                       action:@selector(cancelButtonPressed:)
-                       ];
-    
-    
-    id flexSpace = [[[UIBarButtonItem alloc] autorelease]
-                    initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace
-                    target:nil
-                    action:nil
-                    ];
-    
-    id flipCamera = [[[UIBarButtonItem alloc] autorelease]
-                       initWithBarButtonSystemItem:UIBarButtonSystemItemCamera
-                       target:(id)self
-                       action:@selector(flipCameraButtonPressed:)
-                       ];
-
-    
-#if USE_SHUTTER
-    id shutterButton = [[UIBarButtonItem alloc]
-                        initWithBarButtonSystemItem:UIBarButtonSystemItemCamera
-                        target:(id)self
-                        action:@selector(shutterButtonPressed)
-                        ];
-    
-    toolbar.items = [NSArray arrayWithObjects:flexSpace,cancelButton,flexSpace, flipCamera ,shutterButton,nil];
-#else
-    toolbar.items = [NSArray arrayWithObjects:flexSpace,cancelButton,flexSpace, flipCamera,nil];
-#endif
-    bounds = overlayView.bounds;
-    
-    [toolbar sizeToFit];
-    CGFloat toolbarHeight  = [toolbar frame].size.height;
-    CGFloat rootViewHeight = CGRectGetHeight(bounds);
-    CGFloat rootViewWidth  = CGRectGetWidth(bounds);
-    CGRect  rectArea       = CGRectMake(0, rootViewHeight - toolbarHeight, rootViewWidth, toolbarHeight);
-    [toolbar setFrame:rectArea];
-    
-    [overlayView addSubview: toolbar];
-    
-    UIImage* reticleImage = [self buildReticleImage];
-    UIView* reticleView = [[[UIImageView alloc] initWithImage: reticleImage] autorelease];
-    CGFloat minAxis = MIN(rootViewHeight, rootViewWidth);
-    
-    rectArea = CGRectMake(
-                          0.5 * (rootViewWidth  - minAxis),
-                          0.5 * (rootViewHeight - minAxis),
-                          minAxis,
-                          minAxis
-                          );
-    
-    [reticleView setFrame:rectArea];
-    
-    reticleView.opaque           = NO;
-    reticleView.contentMode      = UIViewContentModeScaleAspectFit;
-    reticleView.autoresizingMask = 0
-    | UIViewAutoresizingFlexibleLeftMargin
-    | UIViewAutoresizingFlexibleRightMargin
-    | UIViewAutoresizingFlexibleTopMargin
-    | UIViewAutoresizingFlexibleBottomMargin
-    ;
-    
-    [overlayView addSubview: reticleView];
-    
+    overlayView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    overlayView.opaque = NO;
     return overlayView;
-}
-
-//--------------------------------------------------------------------------
-
-#define RETICLE_SIZE    500.0f
-#define RETICLE_WIDTH    10.0f
-#define RETICLE_OFFSET   60.0f
-#define RETICLE_ALPHA     0.4f
-
-//-------------------------------------------------------------------------
-// builds the green box and red line
-//-------------------------------------------------------------------------
-- (UIImage*)buildReticleImage {
-    UIImage* result;
-    UIGraphicsBeginImageContext(CGSizeMake(RETICLE_SIZE, RETICLE_SIZE));
-    CGContextRef context = UIGraphicsGetCurrentContext();
-    
-    if (self.processor.is1D) {
-        UIColor* color = [UIColor colorWithRed:1.0 green:0.0 blue:0.0 alpha:RETICLE_ALPHA];
-        CGContextSetStrokeColorWithColor(context, color.CGColor);
-        CGContextSetLineWidth(context, RETICLE_WIDTH);
-        CGContextBeginPath(context);
-        CGFloat lineOffset = RETICLE_OFFSET+(0.5*RETICLE_WIDTH);
-        CGContextMoveToPoint(context, lineOffset, RETICLE_SIZE/2);
-        CGContextAddLineToPoint(context, RETICLE_SIZE-lineOffset, 0.5*RETICLE_SIZE);
-        CGContextStrokePath(context);
-    }
-    
-    if (self.processor.is2D) {
-        UIColor* color = [UIColor colorWithRed:0.0 green:1.0 blue:0.0 alpha:RETICLE_ALPHA];
-        CGContextSetStrokeColorWithColor(context, color.CGColor);
-        CGContextSetLineWidth(context, RETICLE_WIDTH);
-        CGContextStrokeRect(context,
-                            CGRectMake(
-                                       RETICLE_OFFSET,
-                                       RETICLE_OFFSET,
-                                       RETICLE_SIZE-2*RETICLE_OFFSET,
-                                       RETICLE_SIZE-2*RETICLE_OFFSET
-                                       )
-                            );
-    }
-    
-    result = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    return result;
 }
 
 #pragma mark CDVBarcodeScannerOrientationDelegate
