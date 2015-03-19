@@ -29,6 +29,7 @@ public class BarcodeScanner extends CordovaPlugin {
     public static final int REQUEST_CODE = 0x0ba7c0de;
 
     private static final String SCAN = "scan";
+    private static final String SCAN_WITH_CUSTOM_LABEL = "scanWithCustomLabel";
     private static final String ENCODE = "encode";
     private static final String CANCELLED = "cancelled";
     private static final String FORMAT = "format";
@@ -97,7 +98,11 @@ public class BarcodeScanner extends CordovaPlugin {
             }
         } else if (action.equals(SCAN)) {
             scan();
-        } else {
+        } else if (action.equals(SCAN_WITH_CUSTOM_LABEL)) {
+			JSONObject obj = args.optJSONObject(0);
+			String title = obj.optString("lbl");
+            scanWithCustomLabel(title);
+		} else {
             return false;
         }
         return true;
@@ -111,6 +116,17 @@ public class BarcodeScanner extends CordovaPlugin {
         intentScan.addCategory(Intent.CATEGORY_DEFAULT);
         // avoid calling other phonegap apps
         intentScan.setPackage(this.cordova.getActivity().getApplicationContext().getPackageName());
+
+        this.cordova.startActivityForResult((CordovaPlugin) this, intentScan, REQUEST_CODE);
+    }
+
+    /**
+     * Starts an intent to scan and decode a barcode (presenting custom label)
+     */
+    public void scanWithCustomLabel(String lbl) {
+        Intent intentScan = new Intent(SCAN_INTENT);
+        intentScan.putExtra("myLabel", lbl);
+        intentScan.addCategory(Intent.CATEGORY_DEFAULT);
 
         this.cordova.startActivityForResult((CordovaPlugin) this, intentScan, REQUEST_CODE);
     }

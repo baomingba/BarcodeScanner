@@ -70,7 +70,7 @@
          *    }
          * @param {Function} errorCallback
          */
-        BarcodeScanner.prototype.scan = function (successCallback, errorCallback) {
+        BarcodeScanner.prototype.scan = function (successCallback, errorCallback, customLabel) {
             if (errorCallback == null) {
                 errorCallback = function () {
                 };
@@ -85,8 +85,11 @@
                 console.log("BarcodeScanner.scan failure: success callback parameter must be a function");
                 return;
             }
-
-            exec(successCallback, errorCallback, 'BarcodeScanner', 'scan', []);
+			if(customLabel != null){
+				exec(successCallback, errorCallback, 'BarcodeScanner', 'scanWithCustomLabel', [{"lbl": customLabel}]);
+			}
+			else
+				exec(successCallback, errorCallback, 'BarcodeScanner', 'scan', []);
         };
 
         //-------------------------------------------------------------------

@@ -136,6 +136,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     return cameraManager;
   }
 
+  String _label;
+
   @Override
   public void onCreate(Bundle icicle) {
     super.onCreate(icicle);
@@ -155,6 +157,10 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     PreferenceManager.setDefaultValues(this, fakeR.getId("xml", "preferences"), false);
 
     //showHelpOnFirstLaunch();
+    Intent intent = getIntent();
+    if (intent != null && intent.getExtras() != null) {
+      _label = intent.getExtras().getString("myLabel");
+    }
   }
 
   @Override
@@ -737,7 +743,10 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
   private void resetStatusView() {
     resultView.setVisibility(View.GONE);
-    statusView.setText(fakeR.getId("string", "msg_default_status"));
+    if(_label != null)
+        statusView.setText(_label);
+    else
+        statusView.setText(fakeR.getId("string", "msg_default_status"));
     statusView.setVisibility(View.VISIBLE);
     viewfinderView.setVisibility(View.VISIBLE);
     lastResult = null;
