@@ -77,7 +77,7 @@
                     <category android:name="android.intent.category.DEFAULT"/>
                 </intent-filter>
             </activity>
-            <activity android:name="com.google.zxing.client.android.encode.EncodeActivity" android:label="@string/share_name">
+            <!--<activity android:name="com.google.zxing.client.android.encode.EncodeActivity" android:label="@string/share_name">
                 <intent-filter>
                     <action android:name="com.phonegap.plugins.barcodescanner.ENCODE"/>
                     <category android:name="android.intent.category.DEFAULT"/>
@@ -88,7 +88,7 @@
                     <action android:name="android.intent.action.VIEW"/>
                     <category android:name="android.intent.category.DEFAULT"/>
                 </intent-filter>
-            </activity>
+            </activity>-->
         </config-file>
 
         <config-file target="AndroidManifest.xml" parent="/manifest">
@@ -133,6 +133,7 @@
         <source-file src="src/android/LibraryProject/res/values/colors.xml" target-dir="res/values"/>
         <source-file src="src/android/LibraryProject/res/values/dimens.xml" target-dir="res/values"/>
         <source-file src="src/android/LibraryProject/res/values/ids.xml" target-dir="res/values"/>
+        <!--
         <source-file src="src/android/LibraryProject/res/values-ar/strings.xml" target-dir="res/values-ar"/>
         <source-file src="src/android/LibraryProject/res/values-bg/strings.xml" target-dir="res/values-bg"/>
         <source-file src="src/android/LibraryProject/res/values-ca/strings.xml" target-dir="res/values-ca"/>
@@ -162,10 +163,12 @@
         <source-file src="src/android/LibraryProject/res/values-tr/strings.xml" target-dir="res/values-tr"/>
         <source-file src="src/android/LibraryProject/res/values-zh-rCN/strings.xml" target-dir="res/values-zh-rCN"/>
         <source-file src="src/android/LibraryProject/res/values-zh-rTW/strings.xml" target-dir="res/values-zh-rTW"/>
+        -->
         <source-file src="src/android/LibraryProject/res/xml/preferences.xml" target-dir="res/xml"/>
 
         <!-- plugman cannot merge - prepare manual merge -->
         <config-file target="res/values/strings.xml" parent="/resources">
+            <string name="msg_default_status">将二维码放入框内，即可自动扫描</string>
             <string name="app_picker_name">Applications</string>
             <string name="bookmark_picker_name">Bookmarks</string>
             <string name="button_add_calendar">Add to calendar</string>
@@ -217,7 +220,6 @@
             <string name="msg_default_format">Format</string>
             <string name="msg_default_meta">Metadata</string>
             <string name="msg_default_mms_subject">Hi</string>
-            <string name="msg_default_status">Place a barcode inside the viewfinder rectangle to scan it.</string>
             <string name="msg_default_time">Time</string>
             <string name="msg_default_type">Type</string>
             <string name="msg_encode_contents_failed">Could not encode a barcode from the data provided.</string>
