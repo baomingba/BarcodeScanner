@@ -113,9 +113,9 @@
         <source-file src="src/android/LibraryProject/res/drawable-hdpi/shopper_icon.png" target-dir="res/drawable-hdpi"/>
         <source-file src="src/android/LibraryProject/res/drawable-xhdpi/launcher_icon.png" target-dir="res/drawable-xhdpi"/>
         <source-file src="src/android/LibraryProject/res/drawable-xxhdpi/launcher_icon.png" target-dir="res/drawable-xxhdpi"/>
-        <!--<source-file src="src/android/LibraryProject/res/layout/bookmark_picker_list_item.xml" target-dir="res/layout"/>-->
+        <source-file src="src/android/LibraryProject/res/layout/bookmark_picker_list_item.xml" target-dir="res/layout"/>
         <source-file src="src/android/LibraryProject/res/layout/capture.xml" target-dir="res/layout"/>
-        <!--<source-file src="src/android/LibraryProject/res/layout/encode.xml" target-dir="res/layout"/>
+        <source-file src="src/android/LibraryProject/res/layout/encode.xml" target-dir="res/layout"/>
         <source-file src="src/android/LibraryProject/res/layout/help.xml" target-dir="res/layout"/>
         <source-file src="src/android/LibraryProject/res/layout/history_list_item.xml" target-dir="res/layout"/>
         <source-file src="src/android/LibraryProject/res/layout/search_book_contents.xml" target-dir="res/layout"/>
@@ -129,7 +129,7 @@
         <source-file src="src/android/LibraryProject/res/menu/encode.xml" target-dir="res/menu"/>
         <source-file src="src/android/LibraryProject/res/menu/history.xml" target-dir="res/menu"/>
         <source-file src="src/android/LibraryProject/res/raw/beep.ogg" target-dir="res/raw"/>
-        <source-file src="src/android/LibraryProject/res/values/arrays.xml" target-dir="res/values"/>-->
+        <source-file src="src/android/LibraryProject/res/values/arrays.xml" target-dir="res/values"/>
         <source-file src="src/android/LibraryProject/res/values/colors.xml" target-dir="res/values"/>
         <source-file src="src/android/LibraryProject/res/values/dimens.xml" target-dir="res/values"/>
         <source-file src="src/android/LibraryProject/res/values/ids.xml" target-dir="res/values"/>
@@ -164,18 +164,11 @@
         <source-file src="src/android/LibraryProject/res/values-zh-rCN/strings.xml" target-dir="res/values-zh-rCN"/>
         <source-file src="src/android/LibraryProject/res/values-zh-rTW/strings.xml" target-dir="res/values-zh-rTW"/>
         -->
-        <!--<source-file src="src/android/LibraryProject/res/xml/preferences.xml" target-dir="res/xml"/>-->
+        <source-file src="src/android/LibraryProject/res/xml/preferences.xml" target-dir="res/xml"/>
 
         <!-- plugman cannot merge - prepare manual merge -->
         <config-file target="res/values/strings.xml" parent="/resources">
             <string name="msg_default_status">将二维码放入框内，即可自动扫描</string>
-            <string name="msg_default_format">Format</string>
-            <string name="msg_default_meta">Metadata</string>
-            <string name="msg_default_mms_subject">Hi</string>
-            <string name="msg_default_time">Time</string>
-            <string name="msg_default_type">Type</string>
-            <string name="button_google_shopper">Shopper</string>
-            <!--
             <string name="app_picker_name">Applications</string>
             <string name="bookmark_picker_name">Bookmarks</string>
             <string name="button_add_calendar">Add to calendar</string>
@@ -293,7 +286,7 @@
             <string name="share_name">Share via barcode</string>
             <string name="wifi_changing_network">Requesting connection to network\u2026</string>
             <string name="wifi_ssid_label">Network Name</string>
-            <string name="wifi_type_label">Type</string>-->
+            <string name="wifi_type_label">Type</string>
         </config-file>
     </platform>
 
