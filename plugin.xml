@@ -115,7 +115,7 @@
         <source-file src="src/android/LibraryProject/res/drawable-xxhdpi/launcher_icon.png" target-dir="res/drawable-xxhdpi"/>
         <source-file src="src/android/LibraryProject/res/layout/bookmark_picker_list_item.xml" target-dir="res/layout"/>
         <source-file src="src/android/LibraryProject/res/layout/capture.xml" target-dir="res/layout"/>
-        <source-file src="src/android/LibraryProject/res/layout/encode.xml" target-dir="res/layout"/>
+        <!--<source-file src="src/android/LibraryProject/res/layout/encode.xml" target-dir="res/layout"/>
         <source-file src="src/android/LibraryProject/res/layout/help.xml" target-dir="res/layout"/>
         <source-file src="src/android/LibraryProject/res/layout/history_list_item.xml" target-dir="res/layout"/>
         <source-file src="src/android/LibraryProject/res/layout/search_book_contents.xml" target-dir="res/layout"/>
@@ -123,11 +123,11 @@
         <source-file src="src/android/LibraryProject/res/layout/search_book_contents_list_item.xml" target-dir="res/layout"/>
         <source-file src="src/android/LibraryProject/res/layout/share.xml" target-dir="res/layout"/>
         <source-file src="src/android/LibraryProject/res/layout-land/encode.xml" target-dir="res/layout-land"/>
-        <source-file src="src/android/LibraryProject/res/layout-land/share.xml" target-dir="res/layout-land"/>
+        <source-file src="src/android/LibraryProject/res/layout-land/share.xml" target-dir="res/layout-land"/>-->
         <source-file src="src/android/LibraryProject/res/layout-ldpi/capture.xml" target-dir="res/layout-ldpi"/>
         <source-file src="src/android/LibraryProject/res/menu/capture.xml" target-dir="res/menu"/>
-        <source-file src="src/android/LibraryProject/res/menu/encode.xml" target-dir="res/menu"/>
-        <source-file src="src/android/LibraryProject/res/menu/history.xml" target-dir="res/menu"/>
+        <!--<source-file src="src/android/LibraryProject/res/menu/encode.xml" target-dir="res/menu"/>
+        <source-file src="src/android/LibraryProject/res/menu/history.xml" target-dir="res/menu"/>-->
         <source-file src="src/android/LibraryProject/res/raw/beep.ogg" target-dir="res/raw"/>
         <source-file src="src/android/LibraryProject/res/values/arrays.xml" target-dir="res/values"/>
         <source-file src="src/android/LibraryProject/res/values/colors.xml" target-dir="res/values"/>
