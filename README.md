@@ -1,10 +1,15 @@
 # Changes in the fork
 
-1. Implemented a new scanner overlay view as the following snapshot in commit [310aeb](https://github.com/baomingba/BarcodeScanner/commit/310aeb6186c1afda6ed989748126fdd8e3d0e292).
+1. Implemented a new scanner overlay view as the following snapshot in commit [310aeb](https://github.com/baomingba/BarcodeScanner/commit/310aeb6186c1afda6ed989748126fdd8e3d0e292) for iOS.
 
     <img src="https://raw.github.com/baomingba/BarcodeScanner/master/overlay-view.jpg" alt="new scanner overlay view" style="width:320px;height:480px">
 
-2. Merged a [fix](https://github.com/basvanbeek/BarcodeScanner/commit/b571e2be99334eb4d68f3ab01d1a693bd8e2e20a) to the cancel button not working issue.
+2. Merged a [fix](https://github.com/basvanbeek/BarcodeScanner/commit/b571e2be99334eb4d68f3ab01d1a693bd8e2e20a) to the cancel button not working issue for iOS.
+
+3. Merge [Dbuggerx's fix](https://github.com/Dbuggerx/BarcodeScanner) for portrait mode scanner for android.
+
+4. Removed some useless xml and string files, and changed the beep sound when qr decoding completed for android
+
 
 ---
 
